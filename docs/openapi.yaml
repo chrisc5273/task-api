@@ -18,6 +18,13 @@ paths:
       summary: List all tasks
       tags:
         - Tasks
+      parameters:
+        - name: completed
+          in: query
+          description: Filter tasks by their completion status. If omitted, returns all tasks.
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: OK
@@ -27,6 +34,23 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Task'
+        '400':
+          description: Bad request due to invalid query parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: array
+                    items:
+                      type: string
+                example:
+                  error: 'Validation failed'
+                  details:
+                    - 'completed query parameter must be "true" or "false"'
     post:
       summary: Create a new task
       tags:
@@ -58,7 +82,8 @@ paths:
                     items:
                       type: string
                 example:
-                  errors:
+                  error: 'Validation failed'
+                  details:
                     - 'Title must be at least 3 characters'
   /health:
     get:
